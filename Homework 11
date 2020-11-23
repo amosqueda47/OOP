@@ -1,0 +1,205 @@
+/*
+Angel Mosqueda
+This program serializes information to write to a file
+and deserializes to read it
+*/
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+
+class Person implements Serializable{
+	String name;
+	String phone;
+	String birthday;
+	String email;
+
+
+	public Person() {
+		super();
+	}
+
+
+	public Person(String name, String phone, String birthday, String email) {
+		super();
+		this.name = name;
+		this.phone = phone;
+		this.birthday = birthday;
+		this.email = email;
+	}
+
+
+	public String getName() {
+		return name;
+	}
+
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public String getPhone() {
+		return phone;
+	}
+
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+
+	public String getBirthday() {
+		return birthday;
+	}
+
+
+	public void setBirthday(String birthday) {
+		this.birthday = birthday;
+	}
+
+
+	public String getEmail() {
+		return email;
+	}
+
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+
+	@Override
+	public String toString() {
+		return "Person [name=" + name + ", phone=" + phone + ", birthday="
+				+ birthday + ", email=" + email + "]" + "\n";
+	}
+
+
+
+
+
+}
+public class Test {
+
+	public static void main(String[] args) throws IOException {
+		Scanner kb = new Scanner(System.in);
+		Person P = new Person();
+		ArrayList<Person> personArray = new ArrayList<Person>();
+
+		System.out.println("1 = Add Information to File \n" + "2 = Retrii=eve Information \n" + "3 = Delete Information \n"
+		+ "4 = Update Information \n" + "5 = Exit");
+		int selection = kb.nextInt();
+
+
+	while(selection != 5){
+
+	switch(selection)
+		{
+
+	case 1:
+		kb.nextLine();
+		System.out.println("Please Enter Name");
+		P.name = kb.nextLine();
+		System.out.println("Please Enter Phone #");
+		P.phone = kb.nextLine();
+		System.out.println("Please Enter Date of Birth");
+		P.birthday = kb.nextLine();
+		System.out.println("Please Enter Email");
+		P.email = kb.nextLine();
+		personArray.add(new Person(P.name, P.phone, P.birthday, P.email));
+		try {
+			writeToFile(personArray);
+		} catch (IOException e) {
+			System.out.println(e.getMessage());
+		}
+
+		break;
+	case 2:
+		try {
+			readFile();
+		} catch (ClassNotFoundException | IOException e) {
+			System.out.println(e.getMessage());
+		}
+		break;
+	case 3:
+		System.out.println("What do you want to delete?");
+		System.out.println("1 = Name, 2 = Phone, 3 = DOB, 4 = Email ");
+		int delSelection = kb.nextInt();
+		switch(delSelection){
+		case 1:
+			kb.nextLine();
+			System.out.println("Type name you want to delete?");
+			P.name = kb.nextLine();
+			deleteFromFile(personArray,P.name);
+			try {
+				writeToFile(personArray);
+			} catch (IOException e) {
+				System.out.println(e.getMessage());
+			}
+			break;
+		case 2:
+			kb.nextLine();
+			System.out.println("Type phone # you want to delete?");
+			P.phone = kb.nextLine();
+			deleteFromFile(personArray,P.phone);
+			break;
+		case 3:
+			kb.nextLine();
+			System.out.println("Type Birthday you want to delete?");
+			P.birthday = kb.nextLine();
+			deleteFromFile(personArray,P.birthday);
+			break;
+		case 4:
+			kb.nextLine();
+			System.out.println("Type email you want to delete?");
+			P.email = kb.nextLine();
+			deleteFromFile(personArray,P.email);
+			break;
+		}
+		break;
+	case 4:
+
+		break;
+
+	case 5:
+		break;
+
+	}
+	System.out.println("1 = Add Information to File \n" + "2 = Retrieve Information \n" + "3 = Delete Information \n"
+			+ "4 = Update Information \n" + "5 = Exit");
+			 selection = kb.nextInt();
+
+		}
+	}
+
+	public static void writeToFile(ArrayList<Person> personArray)throws IOException {
+		ObjectOutputStream objectOutputStream = new ObjectOutputStream(new FileOutputStream("Person.bin"));
+
+		objectOutputStream.writeObject(personArray);
+	}
+
+	public static void readFile()throws IOException, ClassNotFoundException {
+		ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream("Person.bin"));
+
+		ArrayList<Person> personArray = (ArrayList<Person>) objectInputStream.readObject();
+		System.out.println(personArray);
+
+	}
+	public static void deleteFromFile(ArrayList<Person> personArray, String find) throws IOException{
+		for( int i=0; i<personArray.size(); i++){
+			if(personArray.get(i).equals(find)){
+				personArray.remove(i);
+				writeToFile(personArray);
+				System.out.println(personArray);
+			}
+		}
+	}
+
+
+}
